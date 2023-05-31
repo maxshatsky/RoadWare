@@ -175,3 +175,6 @@ cython_debug/
 /DataScience/maxshatsky/data_orig.json
 /DataScience/maxshatsky/data_test.json
 /DataScience/maxshatsky/kNN Model.ipynb
+/DataScience/maxshatsky/Motor_Vehicle_Collisions_-_Crashes.csv
+/DataScience/maxshatsky/preds.csv
+/DataScience/maxshatsky/X_test.csv
