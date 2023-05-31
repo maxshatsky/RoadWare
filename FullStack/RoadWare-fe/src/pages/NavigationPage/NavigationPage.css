@@ -1,0 +1,24 @@
+.navigation-container {
+    margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 800px;
+}
+
+.map-container {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.pac-target-input {
+  width: 100%;
+}
+
+.navigation-search {
+    padding: 1rem 0;
+    row-gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
