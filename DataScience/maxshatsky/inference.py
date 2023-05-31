@@ -49,11 +49,19 @@ def dumb_model_predict(points):
 def predict_churn():
     json_string = list(request.args.keys())[0]
 
+    print('flag1')
+
     data = json.loads(json_string)
+
+    print('flag2, begin creating input points')
 
     input_points = np.array([[point['lng'], point['lat']] for point in data])
 
+    print('flag3, starting prediction')
+
     predictions = model.predict(input_points).astype(int)
+
+    print('flag4, creation of output begins')
 
     output_json_string = '['
 
@@ -65,6 +73,8 @@ def predict_churn():
         output_json_string += "}],\"dangerLevel\":"
         output_json_string += str(prediction)
         output_json_string += "},"
+
+    print('flag5, creqtion of output ended')
 
     output_json_string = output_json_string[:-1]
     output_json_string += ']'
