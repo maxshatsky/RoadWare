@@ -1,6 +1,11 @@
+import pickle
+
 from flask import Flask, request
 import numpy as np
 import json
+import pandas as pd
+
+sorted_ratios = pd.read_csv('sorted_ratios.csv')
 
 app = Flask(__name__)
 
@@ -14,13 +19,13 @@ class dumb_model:
             output = np.zeros(points.shape[0])
 
             for i in range(len(output) // 5, len(output) // 3):
-                output[i] = 1
+                output[i] = 57
 
             for i in range(len(output) // 3, len(output) // 2):
-                output[i] = 2
+                output[i] = 171
 
             for i in range(len(output) // 2, 2 * len(output) // 3):
-                output[i] = 1
+                output[i] = 57
 
             return output
         else:
@@ -29,18 +34,21 @@ class dumb_model:
 
 model = dumb_model()
 
+with open('knn_model.pickle', 'rb') as file:
+    model = pickle.load(file)
+
 
 def dumb_model_predict(points):
     output = np.zeros(points.shape[0])
 
     for i in range(len(output) // 5, len(output) // 3):
-        output[i] = 1
+        output[i] = -1
 
     for i in range(len(output) // 3, len(output) // 2):
-        output[i] = 2
+        output[i] = 57
 
     for i in range(len(output) // 2, 2 * len(output) // 3):
-        output[i] = 1
+        output[i] = 171
 
     return output
 
@@ -51,9 +59,21 @@ def predict_churn():
 
     input_points = np.array([[point['lng'], point['lat']] for point in json_string])
 
-    predictions = model.predict(input_points).astype(int).astype(str)
+    raw_predictions = model.predict(input_points).astype(int)#.astype(str)
 
-    # output_json_string = '['
+    predictions = np.zeros_like(raw_predictions).astype(int)
+    clusters = sorted_ratios['Cluster'].tolist()
+    for i, prediction in enumerate(raw_predictions):
+        if prediction in clusters:
+            predictions[i] = sorted_ratios[sorted_ratios['Cluster']==prediction]['danger_level'].tolist()[0]
+        else:
+            predictions[i] = 0
+
+    predictions = predictions.astype(str)
+
+    checkpoint = 1
+
+            # output_json_string = '['
     #
     # for point, prediction in zip(input_points, predictions):
     #     output_json_string += "{\"points\":[{\"lng\":"
