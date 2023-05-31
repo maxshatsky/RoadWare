@@ -1,10 +1,11 @@
 from flask import Flask, request
 import numpy as np
+import json
 
 app = Flask(__name__)
 
 
-class DumbModel:
+class dumb_model:
     def __init__(self):
         pass
 
@@ -26,7 +27,7 @@ class DumbModel:
             return np.zeros(points.shape[0])
 
 
-model = DumbModel()
+model = dumb_model()
 
 
 def dumb_model_predict(points):
@@ -50,21 +51,42 @@ def predict_churn():
 
     input_points = np.array([[point['lng'], point['lat']] for point in json_string])
 
-    predictions = model.predict(input_points).astype(int)
+    predictions = model.predict(input_points).astype(int).astype(str)
 
-    output_json_string = '['
+    # output_json_string = '['
+    #
+    # for point, prediction in zip(input_points, predictions):
+    #     output_json_string += "{\"points\":[{\"lng\":"
+    #     output_json_string += str(point[0])
+    #     output_json_string += ",\"lat\":"
+    #     output_json_string += str(point[1])
+    #     output_json_string += "}],\"dangerLevel\":"
+    #     output_json_string += str(prediction)
+    #     output_json_string += "},"
+    #
+    # output_json_string = output_json_string[:-1]
+    # output_json_string += ']'
+
+    output_json = []
+
+    current_subsequence = {"points": []}
+    prev_prediction = None
 
     for point, prediction in zip(input_points, predictions):
-        output_json_string += "{\"points\":[{\"lng\":"
-        output_json_string += str(point[0])
-        output_json_string += ",\"lat\":"
-        output_json_string += str(point[1])
-        output_json_string += "}],\"dangerLevel\":"
-        output_json_string += str(prediction)
-        output_json_string += "},"
+        if prediction != prev_prediction:
+            if current_subsequence["points"]:
+                output_json.append(current_subsequence)
+            current_subsequence = {"points": [{"lng": point[0], "lat": point[1]}],
+                                   "dangerLevel": prediction}
+        else:
+            current_subsequence["points"].append({"lng": point[0], "lat": point[1]})
 
-    output_json_string = output_json_string[:-1]
-    output_json_string += ']'
+        prev_prediction = prediction
+
+    if current_subsequence["points"]:
+        output_json.append(current_subsequence)
+
+    output_json_string = json.dumps(output_json)
 
     return output_json_string
 
