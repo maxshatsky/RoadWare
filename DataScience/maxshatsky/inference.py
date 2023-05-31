@@ -55,7 +55,7 @@ def predict_churn():
 
     predictions = model.predict(input_points).astype(int)
 
-    output_json_string = '[{'
+    output_json_string = '['
 
     for point, prediction in zip(input_points, predictions):
         output_json_string += "{\"points\":[{\"lng\":"
@@ -67,7 +67,7 @@ def predict_churn():
         output_json_string += "},"
 
     output_json_string = output_json_string[:-1]
-    output_json_string += ']}'
+    output_json_string += ']'
 
     return output_json_string
 
