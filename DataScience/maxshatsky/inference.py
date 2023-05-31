@@ -1,11 +1,10 @@
 from flask import Flask, request
 import numpy as np
-import json
 
 app = Flask(__name__)
 
 
-class dumb_model:
+class DumbModel:
     def __init__(self):
         pass
 
@@ -27,7 +26,7 @@ class dumb_model:
             return np.zeros(points.shape[0])
 
 
-model = dumb_model()
+model = DumbModel()
 
 
 def dumb_model_predict(points):
@@ -45,28 +44,13 @@ def dumb_model_predict(points):
     return output
 
 
-# @app.route('/predict')
-# def predict_churn():
-#     json_string = list(request.args.keys())[0]
-
 @app.route('/predict', methods=['POST'])
 def predict_churn():
     json_string = request.get_json()
 
-    print('flag1')
-
-    # data = json.loads(json_string)
-
-    print('flag2, begin creating input points')
-
-    # input_points = np.array([[point['lng'], point['lat']] for point in data])
     input_points = np.array([[point['lng'], point['lat']] for point in json_string])
 
-    print('flag3, starting prediction')
-
     predictions = model.predict(input_points).astype(int)
-
-    print('flag4, creation of output begins')
 
     output_json_string = '['
 
@@ -78,8 +62,6 @@ def predict_churn():
         output_json_string += "}],\"dangerLevel\":"
         output_json_string += str(prediction)
         output_json_string += "},"
-
-    print('flag5, creqtion of output ended')
 
     output_json_string = output_json_string[:-1]
     output_json_string += ']'
