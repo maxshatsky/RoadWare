@@ -20,20 +20,6 @@ const colors = {
   2: "#d5011a",
 };
 
-const PathOptions = {
-  strokeColor: "#FF0000",
-  strokeOpacity: 0.8,
-  strokeWeight: 5,
-  fillColor: "#FF0000",
-  fillOpacity: 0.35,
-  clickable: false,
-  draggable: false,
-  editable: false,
-  visible: true,
-  radius: 30000,
-  zIndex: 1,
-};
-
 function NavigationPage() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -49,7 +35,8 @@ function NavigationPage() {
   const [directions, setDirections] = useState(null);
   const originSearchBoxRef = useRef(null);
   const destinationSearchBoxRef = useRef(null);
-  const [path, setPath] = useState([]);
+  // const [path, setPath] = useState([]);
+  const [segmentsPaths, setsegmentsPaths] = useState([]);
 
   const handleDirectionsResponse = useCallback((response) => {
     if (response !== null) {
@@ -81,20 +68,10 @@ function NavigationPage() {
             const resultPath = response.routes[0].overview_path.map((cord) => {
               return { lng: cord.lng(), lat: cord.lat() };
             });
-
-            const chunkSize = 10;
-            const segments = [];
-
-            for (let i = 0; i < resultPath.length; i += chunkSize) {
-              const newSet = {};
-              newSet.points = resultPath.slice(i, i + chunkSize);
-              segments.push(newSet);
-            }
-
-            console.log(segments);
-            // console.log(resultPath)
+            console.log(resultPath);
+            segments(resultPath);
             await axios.post("http://localhost:8080/danger/level", resultPath);
-            setPath(resultPath);
+
             handleDirectionsResponse(response);
           } else {
             console.log("Directions request failed:", status);
@@ -103,6 +80,19 @@ function NavigationPage() {
       );
     }
   }, [origin, destination, handleDirectionsResponse]);
+
+  const segments = (list) => {
+    const chunkSize = 10;
+    const segments = [];
+    for (let i = 0; i < list.length; i += chunkSize) {
+      const newSet = {};
+      newSet.points = list.slice(i, i + chunkSize);
+      newSet.dangerLevel = Math.floor(Math.random() * 3);
+      segments.push(newSet);
+    }
+    setsegmentsPaths(segments);
+    console.log(segments);
+  };
 
   const defaultBounds = {
     north: 40.917577,
@@ -141,7 +131,23 @@ function NavigationPage() {
               />
             )}
 
-            <Polyline path={path} options={PathOptions} />
+            {segmentsPaths.length > 0 &&
+              segmentsPaths.map((elem) => {
+                const PathOptions = {
+                  strokeOpacity: 0.8,
+                  strokeWeight: 5,
+                  fillColor: "#FF0000",
+                  fillOpacity: 0.35,
+                  clickable: false,
+                  draggable: false,
+                  editable: false,
+                  visible: true,
+                  radius: 30000,
+                  zIndex: 1,
+                };
+                PathOptions.strokeColor = colors[elem.dangerLevel];
+                return <Polyline path={elem.points} options={PathOptions} />;
+              })}
           </GoogleMap>
 
           <div className="navigation-search">
