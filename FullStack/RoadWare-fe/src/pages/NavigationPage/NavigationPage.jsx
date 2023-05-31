@@ -15,23 +15,23 @@ import axios from "axios";
 const libraries = ["places"];
 
 const colors = {
-  0 : '#209d01',
-  1: '#ffa600',
-  2: '#d5011a'
-}
+  0: "#209d01",
+  1: "#ffa600",
+  2: "#d5011a",
+};
 
 const PathOptions = {
-  strokeColor: '#FF0000',
+  strokeColor: "#FF0000",
   strokeOpacity: 0.8,
   strokeWeight: 5,
-  fillColor: '#FF0000',
+  fillColor: "#FF0000",
   fillOpacity: 0.35,
   clickable: false,
   draggable: false,
   editable: false,
   visible: true,
   radius: 30000,
-  zIndex: 1
+  zIndex: 1,
 };
 
 function NavigationPage() {
@@ -86,14 +86,14 @@ function NavigationPage() {
             const segments = [];
 
             for (let i = 0; i < resultPath.length; i += chunkSize) {
-              const newSet = {}
+              const newSet = {};
               newSet.points = resultPath.slice(i, i + chunkSize);
               segments.push(newSet);
             }
 
-            console.log(segments)
+            console.log(segments);
             // console.log(resultPath)
-            await axios.post('http://localhost:8080/danger/level', resultPath )
+            await axios.post("http://localhost:8080/danger/level", resultPath);
             setPath(resultPath);
             handleDirectionsResponse(response);
           } else {
@@ -140,8 +140,8 @@ function NavigationPage() {
                 }}
               />
             )}
-            
-            <Polyline  path={path} options={PathOptions} />
+
+            <Polyline path={path} options={PathOptions} />
           </GoogleMap>
 
           <div className="navigation-search">
