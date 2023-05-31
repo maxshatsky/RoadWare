@@ -47,7 +47,7 @@ def dumb_model_predict(points):
 
 @app.route('/predict')
 def predict_churn():
-    json_string = request.args.get('test_input')
+    json_string = list(request.args.keys())[0]
 
     data = json.loads(json_string)
 
@@ -68,8 +68,6 @@ def predict_churn():
 
     output_json_string = output_json_string[:-1]
     output_json_string += ']}'
-
-    whatIs = output_json_string
 
     return output_json_string
 
