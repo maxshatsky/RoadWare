@@ -19,6 +19,7 @@ function NavigationPage() {
     libraries,
   });
 
+  
   const center = useMemo(
     () => ({ lat: 40.714717096059125, lng: -74.00857509104527 }),
     []
@@ -84,14 +85,14 @@ function NavigationPage() {
             zoom={10}
           >
             {/* Add DirectionService and DirectionsRenderer components */}
-            <DirectionsService
+            { directions && <DirectionsService
               options={{
                 destination: destination,
                 origin: origin,
                 travelMode: "DRIVING",
               }}
               callback={handleDirectionsResponse}
-            />
+            />}
             {directions && (
               <DirectionsRenderer
                 options={{

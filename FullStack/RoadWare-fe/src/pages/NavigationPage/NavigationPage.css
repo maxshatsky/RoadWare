@@ -16,7 +16,7 @@
 }
 
 .navigation-search {
-    padding: 1rem 0;
+    padding: 1rem ;
     row-gap: 1rem;
     display: flex;
     flex-direction: column;
