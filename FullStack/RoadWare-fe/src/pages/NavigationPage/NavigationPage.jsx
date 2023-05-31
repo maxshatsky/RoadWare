@@ -10,6 +10,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { useCallback, useMemo, useRef, useState } from "react";
+import axios from "axios";
 
 const libraries = ["places"];
 
@@ -74,13 +75,25 @@ function NavigationPage() {
           destination: destination,
           travelMode: "DRIVING",
         },
-        (response, status) => {
+        async (response, status) => {
           if (status === "OK") {
             console.log(response);
             const resultPath = response.routes[0].overview_path.map((cord) => {
               return { lng: cord.lng(), lat: cord.lat() };
             });
-            console.log(resultPath)
+
+            const chunkSize = 10;
+            const segments = [];
+
+            for (let i = 0; i < resultPath.length; i += chunkSize) {
+              const newSet = {}
+              newSet.points = resultPath.slice(i, i + chunkSize);
+              segments.push(newSet);
+            }
+
+            console.log(segments)
+            // console.log(resultPath)
+            await axios.post('http://localhost:8080/danger/level', resultPath )
             setPath(resultPath);
             handleDirectionsResponse(response);
           } else {
