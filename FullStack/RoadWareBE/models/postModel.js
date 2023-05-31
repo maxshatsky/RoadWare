@@ -1,3 +1,3 @@
-const postModel = async () => {};
+const getDangerLevelsModel = async () => {};
 
-module.exports = { postModel };
+module.exports = { getDangerLevelsModel };
