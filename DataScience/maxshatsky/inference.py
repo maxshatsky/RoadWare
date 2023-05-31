@@ -55,11 +55,12 @@ def predict_churn():
 
     print('flag1')
 
-    data = json.loads(json_string)
+    # data = json.loads(json_string)
 
     print('flag2, begin creating input points')
 
-    input_points = np.array([[point['lng'], point['lat']] for point in data])
+    # input_points = np.array([[point['lng'], point['lat']] for point in data])
+    input_points = np.array([[point['lng'], point['lat']] for point in json_string])
 
     print('flag3, starting prediction')
 
@@ -88,15 +89,15 @@ def predict_churn():
 
 if __name__ == "__main__":
     # AWS
-    app.run(
-        host='0.0.0.0',
-        port=8080,
-        debug=True
-    )
-
-    # local
     # app.run(
-    #     host='localhost',
-    #     port=5000,
+    #     host='0.0.0.0',
+    #     port=8080,
     #     debug=True
     # )
+
+    # local
+    app.run(
+        host='localhost',
+        port=5000,
+        debug=True
+    )
