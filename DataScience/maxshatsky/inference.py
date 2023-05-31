@@ -89,15 +89,15 @@ def predict_churn():
 
 if __name__ == "__main__":
     # AWS
-    # app.run(
-    #     host='0.0.0.0',
-    #     port=8080,
-    #     debug=True
-    # )
-
-    # local
     app.run(
-        host='localhost',
-        port=5000,
+        host='0.0.0.0',
+        port=8080,
         debug=True
     )
+
+    # local
+    # app.run(
+    #     host='localhost',
+    #     port=5000,
+    #     debug=True
+    # )
