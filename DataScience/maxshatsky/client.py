@@ -10,7 +10,7 @@ def main():
     with open('data_orig.json', 'r') as json_file:
         data = json.load(json_file)
 
-    json_string = open('data_orig.json').read()
+    json_string = open('data_test.json').read()
 
     response = requests.get(
         # 'http://localhost:5000/predict',
