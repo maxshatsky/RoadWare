@@ -169,3 +169,7 @@ cython_debug/
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/RoadWare.iml
 /.idea/vcs.xml
+/DataScience/maxshatsky/data.json
+/DataScience/maxshatsky/EDA_functions.ipynb
+/DataScience/maxshatsky/sketch.ipynb
+/DataScience/maxshatsky/sketch2.ipynb
