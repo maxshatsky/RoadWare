@@ -5,6 +5,7 @@ import {
   DirectionsRenderer,
   DirectionsService,
   GoogleMap,
+  Polyline,
   StandaloneSearchBox,
   useLoadScript,
 } from "@react-google-maps/api";
@@ -12,14 +13,32 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 const libraries = ["places"];
 
-function NavigationPage() {
+const colors = {
+  0 : '#209d01',
+  1: '#ffa600',
+  2: '#d5011a'
+}
 
+const PathOptions = {
+  strokeColor: '#FF0000',
+  strokeOpacity: 0.8,
+  strokeWeight: 5,
+  fillColor: '#FF0000',
+  fillOpacity: 0.35,
+  clickable: false,
+  draggable: false,
+  editable: false,
+  visible: true,
+  radius: 30000,
+  zIndex: 1
+};
+
+function NavigationPage() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries,
   });
 
-  
   const center = useMemo(
     () => ({ lat: 40.714717096059125, lng: -74.00857509104527 }),
     []
@@ -29,6 +48,7 @@ function NavigationPage() {
   const [directions, setDirections] = useState(null);
   const originSearchBoxRef = useRef(null);
   const destinationSearchBoxRef = useRef(null);
+  const [path, setPath] = useState([]);
 
   const handleDirectionsResponse = useCallback((response) => {
     if (response !== null) {
@@ -56,8 +76,13 @@ function NavigationPage() {
         },
         (response, status) => {
           if (status === "OK") {
-            console.log(response)
-            handleDirectionsResponse(response.routes[0].overview_path.map(cord=> console.log({ lng: cord.lng(), lat: cord.lat()})));
+            console.log(response);
+            const resultPath = response.routes[0].overview_path.map((cord) => {
+              return { lng: cord.lng(), lat: cord.lat() };
+            });
+            console.log(resultPath)
+            setPath(resultPath);
+            handleDirectionsResponse(response);
           } else {
             console.log("Directions request failed:", status);
           }
@@ -85,14 +110,16 @@ function NavigationPage() {
             zoom={10}
           >
             {/* Add DirectionService and DirectionsRenderer components */}
-            { directions && <DirectionsService
-              options={{
-                destination: destination,
-                origin: origin,
-                travelMode: "DRIVING",
-              }}
-              callback={handleDirectionsResponse}
-            />}
+            {directions && (
+              <DirectionsService
+                options={{
+                  destination: destination,
+                  origin: origin,
+                  travelMode: "DRIVING",
+                }}
+                callback={handleDirectionsResponse}
+              />
+            )}
             {directions && (
               <DirectionsRenderer
                 options={{
@@ -100,6 +127,8 @@ function NavigationPage() {
                 }}
               />
             )}
+            
+            <Polyline  path={path} options={PathOptions} />
           </GoogleMap>
 
           <div className="navigation-search">
