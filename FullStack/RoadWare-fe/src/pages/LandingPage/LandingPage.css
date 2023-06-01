@@ -1,20 +1,18 @@
 .page-container {
-  color: white;
+  color: #103d6f;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background-color: gray; */
   width: 100%;
   height: 100%;
-  background-color: #d3163b;
+  background-color: white;
 }
+
 .welcome-container {
-  width: 800px;
-  /* border: 3px solid green; */
-  /* padding: 200px; */
+  margin: 2rem;
+  position: relative;
+  width: 450px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   row-gap: 1rem;
   flex-direction: column;
   position: relative;
@@ -22,31 +20,43 @@
 }
 
 .welcome-container h1 {
-  border: 2px solid white;
+  font-size: 2em;
+  text-align: center;
+  width: 100%;
+  border: 2px solid #103d6f;
   padding: 2rem;
-  border-bottom: 7px solid white;
-  border-right: 7px solid white;
+  border-bottom: 7px solid #103d6f;
+  border-right: 7px solid #103d6f;
+}
+.welcome-container h4 {
+  text-align: center;
 }
 
 .welcome-container p {
+  margin: 2rem;
   max-width: 400px;
   text-align: center;
 }
 
+
+
 button.btn {
   border-radius: unset;
-  padding: 1rem;
+  padding: 0.5rem;
   font-weight: 700;
-  width: 20rem;
-  color: #d3163b;
-  background-color: white;
-  border: 1px solid white;
+  width: 100%;
+  color: white;
+  background-color: #103d6f;
+  border: 1px solid #103d6f;
   box-shadow: 10px 11px 16px 0 rgba(8, 7, 7, 0.2);
 }
+
 button.btn:hover {
-  background-color: #d3163b;
-  border: 1px solid white;
+  color: white;
+  background-color: #103d6f;
+  border: 1px solid #103d6f;
 }
+
 .btn:active {
   background-color: #060001 !important;
   border: 1px solid white !important;
@@ -54,14 +64,20 @@ button.btn:hover {
 .landingpageimage {
   display: flex;
   width: 250px;
-  height: 200px;
+  height: 290px;
   margin: 2rem;
-  -webkit-filter: invert(100%);
 }
-.dangerimage {
-  width: 35px;
-  position: relative;
-  left: 490px;
-  top: 10px;
-  opacity: 0.7;
+
+
+input {
+  height: 40px;
+  font-size: 14px;
+  background-image: url(https://cdn2.hubspot.net/hubfs/4004166/bioticresearch_website_assets/images/search_icon.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 40px;
+  background-color: #fff;
+  border: 1px solid #000;
+  box-shadow: none;
+  -webkit-appearance: none;
 }

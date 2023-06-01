@@ -7,17 +7,13 @@ function LandingPage() {
 
   return (
     <div className="page-container">
-      <img
-        className="dangerimage"
-        src="https://i.ibb.co/BK7WqvT/yield-sign-computer-icons-traffic-sign-clip-art-danger-0e2b58c4f8037fdf22e9b04b4d03b37f.png"
-      ></img>
 
       <div className="welcome-container">
-        <h1>Welcome to RoadWare</h1>
+        <h1>RoadWare</h1>
         <h4>Your Ultimate Safe Route Companion!</h4>
         <img
           className="landingpageimage"
-          src="https://i.ibb.co/VHMXpmr/ou0g6ro74dgtm8p6jju07kc0sf.png"
+          src="https://res.cloudinary.com/dcidne2pg/image/upload/v1685563481/ou0g6ro74dgtm8p6jju07kc0sf_3_1_wru1nt.png"
         ></img>
         <p>
           Safest routes, prevents crashes, highlights dangers. Your ultimate

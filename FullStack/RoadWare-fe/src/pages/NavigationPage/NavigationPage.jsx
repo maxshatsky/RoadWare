@@ -5,6 +5,8 @@ import {
   DirectionsRenderer,
   DirectionsService,
   GoogleMap,
+  InfoWindow,
+  Marker,
   Polyline,
   StandaloneSearchBox,
   useLoadScript,
@@ -36,6 +38,7 @@ function NavigationPage() {
   const originSearchBoxRef = useRef(null);
   const destinationSearchBoxRef = useRef(null);
   // const [path, setPath] = useState([]);
+  const [selectedPolyline, setSelectedPolyline] = useState(null);
   const [segmentsPaths, setsegmentsPaths] = useState([]);
 
   const handleDirectionsResponse = useCallback((response) => {
@@ -61,18 +64,26 @@ function NavigationPage() {
           origin: origin,
           destination: destination,
           travelMode: "DRIVING",
+          provideRouteAlternatives: true,
         },
         async (response, status) => {
+          console.log(response)
           if (status === "OK") {
-            console.log(response);
-            const resultPath = response.routes[0].overview_path.map((cord) => {
-              return { lng: cord.lng(), lat: cord.lat() };
-            });
-            console.log(resultPath);
-            segments(resultPath);
-            await axios.post("http://localhost:8080/danger/level", resultPath);
+            const results = [];
+            for (let i = 0; i < response.routes.length; i++) {
+              console.log(response);
+              const resultPath = response.routes[i].overview_path.map(
+                (cord) => {
+                  return { lng: cord.lng(), lat: cord.lat() };
+                }
+              );
+              results.push(resultPath);
+            }
+
+            const data = await getDangerLevels(results)
 
             handleDirectionsResponse(response);
+            setsegmentsPaths([...data[0], ...data[1]]);
           } else {
             console.log("Directions request failed:", status);
           }
@@ -81,17 +92,19 @@ function NavigationPage() {
     }
   }, [origin, destination, handleDirectionsResponse]);
 
-  const segments = (list) => {
-    const chunkSize = 10;
-    const segments = [];
-    for (let i = 0; i < list.length; i += chunkSize) {
-      const newSet = {};
-      newSet.points = list.slice(i, i + chunkSize);
-      newSet.dangerLevel = Math.floor(Math.random() * 3);
-      segments.push(newSet);
+  const getDangerLevels = async (results) => {
+    try {
+      const requests = results.map((result) =>
+        axios.post("http://localhost:8080/danger/level", result)
+      );
+
+      const responses = await Promise.all(requests);
+      const data = responses.map((response) => response.data);
+      console.log(data);
+      return data
+    } catch (err) {
+      console.log(err);
     }
-    setsegmentsPaths(segments);
-    console.log(segments);
   };
 
   const defaultBounds = {
@@ -119,34 +132,64 @@ function NavigationPage() {
                   destination: destination,
                   origin: origin,
                   travelMode: "DRIVING",
+                  minZoom: 10, // Set the minimum zoom level
+                  maxZoom: 10, // Set the maximum zoom level
                 }}
                 callback={handleDirectionsResponse}
               />
             )}
-            {directions && (
+            {directions &&
+            directions.routes.slice(0, 2).map((route, index) => (
               <DirectionsRenderer
+                key={index}
                 options={{
                   directions: directions,
+                  routeIndex: index,
                 }}
               />
-            )}
+            ))}
 
             {segmentsPaths.length > 0 &&
-              segmentsPaths.map((elem) => {
+              segmentsPaths.map((elem, index) => {
+                const handlePolylineClick = (e) => {
+                  setSelectedPolyline(elem);
+                };
+
+                const middleIndex = Math.floor(elem.points.length / 2);
                 const PathOptions = {
                   strokeOpacity: 0.8,
-                  strokeWeight: 5,
+                  strokeWeight: 8,
                   fillColor: "#FF0000",
                   fillOpacity: 0.35,
-                  clickable: false,
+                  clickable: true,
                   draggable: false,
                   editable: false,
                   visible: true,
                   radius: 30000,
                   zIndex: 1,
+                  disableDoubleClickZoom: true,
                 };
                 PathOptions.strokeColor = colors[elem.dangerLevel];
-                return <Polyline path={elem.points} options={PathOptions} />;
+                return (
+                  <React.Fragment key={index}>
+                    <Polyline
+                      path={elem.points}
+                      options={PathOptions}
+                      onClick={handlePolylineClick}
+                      onDblClick={(e) => e.stop()}
+                    />
+
+                    {selectedPolyline === elem && (
+                      <Marker
+                        position={elem.points[middleIndex]}
+                        icon={{
+                          // url: '/custom-marker.png', // Path to your custom marker icon
+                          scaledSize: new window.google.maps.Size(50, 50), // Size of the marker icon
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
+                );
               })}
           </GoogleMap>
 
@@ -183,7 +226,7 @@ function NavigationPage() {
             <Button onClick={handleSearch}>Search</Button>
           </div>
         </div>
-      )}{" "}
+      )}
     </>
   );
 }
