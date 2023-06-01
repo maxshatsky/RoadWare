@@ -12,7 +12,7 @@ const getDangerLevels = async (req, res) => {
     const responseData = response.data;
 
     res.status(200).json(responseData);
-    fs.writeFileSync('data.json', JSON.stringify(points))
+    // fs.writeFileSync('data.json', JSON.stringify(points))
     // res.status(200).send("successful request!");
   } catch (err) {
     console.log(err)
