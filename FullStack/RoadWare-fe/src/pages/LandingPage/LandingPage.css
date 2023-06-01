@@ -38,8 +38,6 @@
   text-align: center;
 }
 
-
-
 button.btn {
   border-radius: unset;
   padding: 0.5rem;
@@ -67,7 +65,6 @@ button.btn:hover {
   height: 290px;
   margin: 2rem;
 }
-
 
 input {
   height: 40px;
