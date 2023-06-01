@@ -1,5 +1,4 @@
 import pickle
-
 from flask import Flask, request
 import numpy as np
 import json
@@ -32,74 +31,70 @@ class dumb_model:
             return np.zeros(points.shape[0])
 
 
-model = dumb_model()
+# model = dumb_model()
 
 with open('knn_model.pickle', 'rb') as file:
     model = pickle.load(file)
 
 
-def dumb_model_predict(points):
-    output = np.zeros(points.shape[0])
+def modify_array(arr):
+    n = len(arr)
 
-    for i in range(len(output) // 5, len(output) // 3):
-        output[i] = -1
+    for i in range(1, n - 1):
+        if arr[i] != arr[i - 1] and arr[i] != arr[i + 1]:
+            arr[i] = (arr[i + 1])
 
-    for i in range(len(output) // 3, len(output) // 2):
-        output[i] = 57
+    if arr[0] != arr[1]:
+        arr[0] = arr[1]
 
-    for i in range(len(output) // 2, 2 * len(output) // 3):
-        output[i] = 171
+    if arr[n - 1] != arr[n - 2]:
+        arr[n - 1] = arr[n - 2]
 
-    return output
+    return arr
 
 
 @app.route('/predict', methods=['POST'])
 def predict_churn():
-    json_string = request.get_json()
+    json_data = request.get_json()
 
-    input_points = np.array([[point['lng'], point['lat']] for point in json_string])
+    input_points_df = pd.DataFrame(json_data)
 
-    raw_predictions = model.predict(input_points).astype(int)#.astype(str)
+    input_points_df = input_points_df.rename(columns={'lng': 'LONGITUDE', 'lat': 'LATITUDE'})
+    column_order = ['LATITUDE', 'LONGITUDE']
+    input_points_df = input_points_df[column_order]
 
-    predictions = np.zeros_like(raw_predictions).astype(int)
+    raw_predictions = model.predict(input_points_df)
+
+    danger_level_predictions = np.zeros_like(raw_predictions).astype(int)
+
+    # just a list to check presence of cluster in the table
     clusters = sorted_ratios['Cluster'].tolist()
+
     for i, prediction in enumerate(raw_predictions):
         if prediction in clusters:
-            predictions[i] = sorted_ratios[sorted_ratios['Cluster']==prediction]['danger_level'].tolist()[0]
+            danger_level_predictions[i] = \
+            sorted_ratios[sorted_ratios['Cluster'] == prediction]['danger_level'].tolist()[0]
         else:
-            predictions[i] = 0
+            danger_level_predictions[i] = 0
 
-    predictions = predictions.astype(str)
+    # Not letting a single point be in a danger, just sequences.
+    danger_level_predictions = modify_array(danger_level_predictions)
 
-    checkpoint = 1
-
-            # output_json_string = '['
-    #
-    # for point, prediction in zip(input_points, predictions):
-    #     output_json_string += "{\"points\":[{\"lng\":"
-    #     output_json_string += str(point[0])
-    #     output_json_string += ",\"lat\":"
-    #     output_json_string += str(point[1])
-    #     output_json_string += "}],\"dangerLevel\":"
-    #     output_json_string += str(prediction)
-    #     output_json_string += "},"
-    #
-    # output_json_string = output_json_string[:-1]
-    # output_json_string += ']'
+    danger_level_predictions = danger_level_predictions.astype(str)
 
     output_json = []
 
     current_subsequence = {"points": []}
     prev_prediction = None
 
-    for point, prediction in zip(input_points, predictions):
+    for point, prediction in zip(json_data, danger_level_predictions):
         if prediction != prev_prediction:
             if current_subsequence["points"]:
                 output_json.append(current_subsequence)
-            current_subsequence = {"points": [{"lng": point[0], "lat": point[1]}],
+            current_subsequence = {"points": [{"lng": point['lng'], "lat": point['lat']}],
                                    "dangerLevel": prediction}
         else:
-            current_subsequence["points"].append({"lng": point[0], "lat": point[1]})
+            current_subsequence["points"].append({"lng": point['lng'], "lat": point['lat']})
 
         prev_prediction = prediction
 
