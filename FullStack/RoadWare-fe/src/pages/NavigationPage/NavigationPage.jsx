@@ -13,6 +13,7 @@ import {
 } from "@react-google-maps/api";
 import { useCallback, useMemo, useRef, useState } from "react";
 import axios from "axios";
+import LegendColors from "./LegendColors";
 
 const libraries = ["places"];
 
@@ -83,7 +84,11 @@ function NavigationPage() {
             const data = await getDangerLevels(results)
 
             handleDirectionsResponse(response);
-            setsegmentsPaths([...data[0], ...data[1]]);
+            if (data[1]) {
+              setsegmentsPaths([...data[0], ...data[1]]);
+            } else {
+              setsegmentsPaths([...data[0]]);
+            }
           } else {
             console.log("Directions request failed:", status);
           }
@@ -151,11 +156,13 @@ function NavigationPage() {
 
             {segmentsPaths.length > 0 &&
               segmentsPaths.map((elem, index) => {
+
                 const handlePolylineClick = (e) => {
                   setSelectedPolyline(elem);
                 };
 
                 const middleIndex = Math.floor(elem.points.length / 2);
+
                 const PathOptions = {
                   strokeOpacity: 0.8,
                   strokeWeight: 8,
@@ -186,8 +193,10 @@ function NavigationPage() {
                           // url: '/custom-marker.png', // Path to your custom marker icon
                           scaledSize: new window.google.maps.Size(50, 50), // Size of the marker icon
                         }}
-                      />
-                    )}
+
+                        />
+                        )}
+                        {selectedPolyline === elem && <LegendColors color={colors[elem.dangerLevel]} code={elem.dangerLevel}/>}
                   </React.Fragment>
                 );
               })}
