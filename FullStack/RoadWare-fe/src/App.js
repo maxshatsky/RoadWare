@@ -8,7 +8,6 @@ import LegendColors from "./pages/NavigationPage/LegendColors";
 function App() {
   return (
     <div className="App">
-      <LegendColors />
       <Routes>
         <Route path={"/"} element={<LandingPage />} />
         <Route path={"/navigation"} element={<NavigationPage />} />
