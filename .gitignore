@@ -7,7 +7,6 @@ __pycache__/
 *.so
 
 # DS trash
-*.csv
 
 
 # Distribution / packaging
@@ -169,3 +168,13 @@ cython_debug/
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/RoadWare.iml
 /.idea/vcs.xml
+/DataScience/maxshatsky/data.json
+/DataScience/maxshatsky/EDA_functions.ipynb
+/DataScience/maxshatsky/sketch.ipynb
+/DataScience/maxshatsky/sketch2.ipynb
+/DataScience/maxshatsky/data_orig.json
+/DataScience/maxshatsky/data_test.json
+/DataScience/maxshatsky/kNN Model.ipynb
+/DataScience/maxshatsky/Motor_Vehicle_Collisions_-_Crashes.csv
+/DataScience/maxshatsky/preds.csv
+/DataScience/maxshatsky/X_test.csv
