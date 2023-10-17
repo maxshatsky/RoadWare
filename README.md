@@ -1,8 +1,8 @@
 # RoadWare - Drive Safe
 
-#### ITC Smart Cities Hackathon 2023
+### ITC Smart Cities Hackathon 2023
 
-#### Group 4
+### Group 4
 **Full Stack**: Noa Sela , Reem Cohen , Shlomo Z
 
 **Data Science**: Maxim Shatzki, Eliott Caen, Maya Halevy
